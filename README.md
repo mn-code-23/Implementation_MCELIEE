@@ -16,9 +16,9 @@ Le projet est decoupe en sous-problemes mathematiques clairement identifiables. 
 
 ## Organisation des fichiers
 - `param.h` : definition des parametres (m, t, n, k) et polynome irreductible de F2^m.
-- `gf.h` : arithmetique dans F2^m (addition, multiplication, inverse, racine carree).
-- `poly.h` : polynomes sur F2^m (add/mul/mod/xgcd, evaluation, racine, etc.).
-- `matrix.h` : matrices binaires F2 (bitset), operations de lignes/colonnes.
+- `gf.h` : arithmetique dans $F_{2^m}$ (addition, multiplication, inverse, racine carree).
+- `poly.h` : polynomes sur $F_{2^m} (add/mul/mod/xgcd, evaluation, racine, etc.).
+- `matrix.h` : matrices binaires $F_2$ (bitset), operations de lignes/colonnes.
 - `key_gen.h` : generation des cles (Algorithme 1 du guide).
 - `encrypt.h` : chiffrement (Algorithme 2).
 - `decrypt.h` : decryption + decodage Patterson (Algorithmes 3 a 7).
@@ -39,14 +39,14 @@ Le projet est decoupe en sous-problemes mathematiques clairement identifiables. 
    - $Y_{i,j} = \alpha_j^i$ pour $i = 0, \cdots, t-1$
    - $Z = diag(g(\alpha_j)^{-1})$
 2. Developper H (coefficients dans $F_2^m$) en H' binaire de taille (m*t) x n.
-3. Mettre H' en forme systematique : $H'_r = [A | I_{m*t}]$.
+3. Mettre H' en forme systematique $H^'_r = [A | I_{m*t}]$.
 4. Construire $G = [I_k | A^T]$.
 5. On **ne** tire **pas** S ni P pour ce projet.
-6. G_pub = G.
+6. $G_{pub} = G$.
 
 ### Algorithme 2 (Encrypt) - `encrypt.h`
-- y = m * G_pub
-- c = y XOR e, avec wH(e) = t
+- $y = m  G_{pub}$
+- $c = y XOR e$, avec $w_H(e) = t$
 
 ### Algorithmes 3-7 (Decrypt + Decode) - `decrypt.h`
 1. Decoder via Patterson (Algorithmes 4-7) pour trouver l'erreur e et y = c XOR e.
