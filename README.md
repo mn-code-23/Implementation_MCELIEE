@@ -17,7 +17,7 @@ Le projet est decoupe en sous-problemes mathematiques clairement identifiables. 
 ## Organisation des fichiers
 - `param.h` : definition des parametres (m, t, n, k) et polynome irreductible de F2^m.
 - `gf.h` : arithmetique dans $F_{2^m}$ (addition, multiplication, inverse, racine carree).
-- `poly.h` : polynomes sur $F_{2^m} (add/mul/mod/xgcd, evaluation, racine, etc.).
+- `poly.h` : polynomes sur $F_{2^m}$ (add/mul/mod/xgcd, evaluation, racine, etc.).
 - `matrix.h` : matrices binaires $F_2$ (bitset), operations de lignes/colonnes.
 - `key_gen.h` : generation des cles (Algorithme 1 du guide).
 - `encrypt.h` : chiffrement (Algorithme 2).
