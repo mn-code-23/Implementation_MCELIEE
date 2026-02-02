@@ -1,4 +1,4 @@
-# Projet de semestre - Implementation de McEliece en C (codes de Goppa)
+# Projet - Implementation de McEliece en C (codes de Goppa)
 
 **UE : Cryptographie post-quantique & theorie des codes**
 
@@ -83,10 +83,10 @@ $$\\sigma(X) = \\gamma(X)^2 + X \\phi(X)^2.$$
 Implementer un algorithme de type Cantor–Zassenhaus (ou variante) pour factoriser \( \\sigma(X) \) et extraire les racines.
 
 ## Tests minimaux
-1. **GF** : verifie que a * a^{-1} = 1 pour a != 0.
-2. **Poly** : verifie p = (q * d + r) avec deg(r) < deg(d).
-3. **Systematisation** : verifie que le bloc droit de H'_r est I_{m*t}.
-4. **Orthogonalite** : verifie H'_r * G^T = 0.
+1. **GF** : verifie que $a * a^{-1} = 1$ pour $a \ne 0$.
+2. **Poly** : verifie $p = (q * d + r)$ avec $deg(r) < deg(d)$.
+3. **Systematisation** : verifie que le bloc droit de $H'_r$ est $I_{m*t}$.
+4. **Orthogonalite** : verifie $H'_r * G^T = 0$.
 5. **Chiffrement/Dechiffrement** : pour plusieurs messages, decrypt(encrypt(m)) = m.
 6. **Patterson** : verifier que le decodeur corrige des erreurs de poids <= t sur des mots de code valides.
 
@@ -104,6 +104,6 @@ Pour garder des temps raisonnables en TP, utilisez un petit jeu de parametres (e
 
 ## Mapping fonctions -> operations mathematiques (resume)
 Les commentaires de chaque fonction dans les `.h` indiquent precisement :
-- les objets mathematiques manipules (F2^m, F2, matrices, polynomes),
+- les objets mathematiques manipules ($F2^m$, $F_2$, matrices, polynomes),
 - la formule ou l'operation attendue,
 - la reference a l'algorithme du guide (1 a 7).
