@@ -25,19 +25,19 @@ Le projet est decoupe en sous-problemes mathematiques clairement identifiables. 
 - `util.h` : helpers (vecteurs binaires, poids de Hamming).
 - `rng.h` : interface de tirage aleatoire.
 
-## Description mathematique (vue d'ensemble)
+## Description mathematique 
 
 ### Parametres
 - m : degre du corps $F_2^m$ (n = 2^m)
 - t : capacite de correction d'erreurs
 - $k = n - m*t$
 - $g(X)$ : polynome de Goppa irreductible de degre t sur $F_2^m$
-- $L = (alpha_0, ..., alpha_{n-1})$ : support (elements distincts de $F_2^m$)
+- $L = (\alpha_0, ..., \alpha_{n-1})$ : support (elements distincts de $F_2^m$)
 
 ### Algorithme 1 (KeyGen) - a realiser dans `key_gen.h`
 1. Construire la matrice de parite H = Y * Z, avec
-   - $Y_{i,j} = alpha_j^i$ pour $i = 0, \cdots, t-1$
-   - Z = diag(g(alpha_j)^{-1})
+   - $Y_{i,j} = \alpha_j^i$ pour $i = 0, \cdots, t-1$
+   - $Z = diag(g(\alpha_j)^{-1})$
 2. Developper H (coefficients dans $F_2^m$) en H' binaire de taille (m*t) x n.
 3. Mettre H' en forme systematique : $H'_r = [A | I_{m*t}]$.
 4. Construire $G = [I_k | A^T]$.
@@ -52,7 +52,7 @@ Le projet est decoupe en sous-problemes mathematiques clairement identifiables. 
 1. Decoder via Patterson (Algorithmes 4-7) pour trouver l'erreur e et y = c XOR e.
 2. Recuperer m directement depuis G (pas de S, pas de P).
 
-#### Patterson (details des etapes a implementer)
+#### Patterson
 Pour ce projet, vous devez **decomposer** l'algorithme en sous-fonctions claires (voir `decrypt.h`).  
 On suit la structure des Algorithmes 4 a 7 du guide :
 
@@ -82,7 +82,7 @@ $$\\sigma(X) = \\gamma(X)^2 + X \\phi(X)^2.$$
 **Algorithme 7 : Recherche de racines**  
 Implementer un algorithme de type Cantor–Zassenhaus (ou variante) pour factoriser \( \\sigma(X) \) et extraire les racines.
 
-## Tests minimaux (obligatoires)
+## Tests minimaux
 1. **GF** : verifie que a * a^{-1} = 1 pour a != 0.
 2. **Poly** : verifie p = (q * d + r) avec deg(r) < deg(d).
 3. **Systematisation** : verifie que le bloc droit de H'_r est I_{m*t}.
@@ -93,7 +93,7 @@ Implementer un algorithme de type Cantor–Zassenhaus (ou variante) pour factori
 ## Parametres conseilles pour les tests
 Pour garder des temps raisonnables en TP, utilisez un petit jeu de parametres (ex. m = 6, t = 5), puis un jeu plus grand pour la validation finale.
 
-## Bareme (proposition)
+## Bareme
 - 25% : GF(2^m) + polynomes (operations de base correctes).
 - 30% : KeyGen (H, H', systematisation, G).
 - 25% : Chiffrement + Dechiffrement complet.
