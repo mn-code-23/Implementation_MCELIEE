@@ -137,45 +137,36 @@ size_t gauss_jordan_mod2(binmat_t *m, size_t *pivot_cols, size_t max_pivots) {
 /* ===== Systematisation : H' -> H'_r = [A | I_r] ===== */
 
 int systematize(binmat_t *h, size_t r, size_t n, size_t *col_perm) {
-  if (!h || !h->data || !col_perm || h->rows < r || h->cols != n) {
-    return 0;
-  }
+  if (!h || !col_perm) return 0;
 
-  /*
-   * Systematiser H en forme [A | I_r].
-   * - Les r premieres colonnes doivent etre l'identite.
-   * - col_perm[i] = j signifie que la colonne i de H systematise
-   *   vient de la colonne j de H original.
-   */
-
-  /* Appliquer Gauss-Jordan pour obtenir la forme echelonnee reduite */
-  size_t pivot_cols_buf[256];
+  size_t pivot_cols_buf[512];
   size_t pivot_count = gauss_jordan_mod2(h, pivot_cols_buf, r);
+  if (pivot_count < r) return 0;
 
-  if (pivot_count < r) {
-    return 0; /* Rang insuffisant */
-  }
-
-  /* Les r premieres colonnes doivent etre les pivots */
-  for (size_t i = 0; i < r; i++) {
-    col_perm[i] = pivot_cols_buf[i];
-  }
-
-  /* Les colonnes non-pivots */
-  size_t non_pivot_idx = r;
-  for (size_t col = 0; col < n && non_pivot_idx < n; col++) {
+  /* === COL_PERM : non-pivots en premier, pivots en dernier → [A | I] === */
+  size_t k = n - r;
+  size_t idx = 0;
+  for (size_t c = 0; c < n; c++) {
     int is_pivot = 0;
-    for (size_t i = 0; i < r; i++) {
-      if (pivot_cols_buf[i] == col) {
-        is_pivot = 1;
-        break;
-      }
+    for (size_t p = 0; p < pivot_count; p++) {
+      if (pivot_cols_buf[p] == c) { is_pivot = 1; break; }
     }
-    if (!is_pivot) {
-      col_perm[non_pivot_idx] = col;
-      non_pivot_idx++;
+    if (!is_pivot) col_perm[idx++] = c;
+  }
+  for (size_t p = 0; p < pivot_count; p++) {
+    col_perm[idx++] = pivot_cols_buf[p];
+  }
+
+  /* === APPLIQUER LA PERMUTATION DE COLONNES (H_bin devient [A | I]) === */
+  binmat_t temp = binmat_alloc(h->rows, h->cols);
+  for (size_t row = 0; row < h->rows; row++) {
+    for (size_t j = 0; j < h->cols; j++) {
+      int bit = binmat_get(h, row, col_perm[j]);
+      binmat_set(&temp, row, j, bit);
     }
   }
+  memcpy(h->data, temp.data, h->rows * h->words_per_row * sizeof(uint64_t));
+  binmat_free(&temp);
 
   return 1;
 }
@@ -288,6 +279,22 @@ int mc_keygen(const mc_params_t *params, mc_public_key_t *pk, mc_secret_key_t *s
     gf_clear(&ctx);
     return -1;
   }
+
+  /* === PERMUTER L SELON LA MÊME PERMUTATION === */
+  gf_t *L_new = (gf_t *)malloc((size_t)params->n * sizeof(gf_t));
+  if (!L_new) {
+    binmat_free(&H_bin);
+    free(H);
+    poly_free(&g);
+    free(L);
+    gf_clear(&ctx);
+    return -1;
+  }
+  for (size_t j = 0; j < (size_t)params->n; j++) {
+    L_new[j] = L[col_perm[j]];
+  }
+  free(L);
+  L = L_new;
 
   /* 6. Extraire A et construire G = [I_k | A^T] */
   /* A est H_bin[*, 0..k-1] */

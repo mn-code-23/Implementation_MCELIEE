@@ -52,7 +52,13 @@ void poly_gcd(poly_t *d, const poly_t *a, const poly_t *b, const gf_ctx_t *ctx);
  * XGCD : u*a + v*b = d = gcd(a,b).
  * Operation mathematique : algorithme d'Euclide etendu.
  */
+/* XGCD : u*a + v*b = d = gcd(a,b).
+ * Operation mathematique : algorithme d'Euclide etendu.
+ */
 void poly_xgcd(poly_t *d, poly_t *u, poly_t *v, const poly_t *a, const poly_t *b, const gf_ctx_t *ctx);
+
+/* utility used by multiple modules */
+void poly_copy(poly_t *dst, const poly_t *src);
 
 /*
  * Evaluation : p(alpha) dans F2^m.

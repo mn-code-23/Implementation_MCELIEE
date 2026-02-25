@@ -17,10 +17,13 @@ static int u8rnd(void) {
   return (int)b;
 }
 
-static void rand_vec(uint8_t *v, size_t n) {
-  for (size_t i = 0; i < n; i++) {
-    int r = u8rnd();
-    v[i] = (r < 0) ? 0 : (uint8_t)(r & 1);
+static void rand_vec(uint8_t *v, size_t num_bits) {
+  size_t bytes = (num_bits + 7) / 8;
+  for (size_t i = 0; i < bytes; i++) {
+    v[i] = (uint8_t)u8rnd();
+  }
+  if (num_bits % 8) {
+    v[bytes - 1] &= (1u << (num_bits % 8)) - 1;
   }
 }
 
@@ -58,9 +61,12 @@ int main(void) {
   printf("Clés générées avec succès\n");
   fflush(stdout);
 
-  uint8_t *m = (uint8_t *)calloc((size_t)params.k, sizeof(uint8_t));
-  uint8_t *c = (uint8_t *)calloc((size_t)params.n, sizeof(uint8_t));
-  uint8_t *m2 = (uint8_t *)calloc((size_t)params.k, sizeof(uint8_t));
+  size_t k_bytes = ((size_t)params.k + 7) / 8;
+  size_t n_bytes = ((size_t)params.n + 7) / 8;
+
+  uint8_t *m  = calloc(k_bytes, 1);
+  uint8_t *c  = calloc(n_bytes, 1);
+  uint8_t *m2 = calloc(k_bytes, 1);
   if (!m || !c || !m2) {
     fprintf(stderr, "alloc failed\n");
     fflush(stderr);
@@ -105,12 +111,11 @@ int main(void) {
   printf("Vérification du résultat...\n");
   fflush(stdout);
 
-  if (memcmp(m, m2, (size_t)params.k) != 0) {
+  if (memcmp(m, m2, k_bytes) == 0) {
+    printf("✓ OK: decrypt(encrypt(m)) == m\n");
+  } else {
     fprintf(stderr, "decrypt mismatch\n");
     fflush(stderr);
-  } else {
-    printf("✓ OK: decrypt(encrypt(m)) == m\n");
-    fflush(stdout);
   }
   
   free(m);

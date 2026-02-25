@@ -213,15 +213,13 @@ int mc_decode(uint8_t *y, const uint8_t *c, const mc_secret_key_t *sk, const gf_
     poly_free(&Sc);
     return -1;
   }
-  poly_add(&T_plus_X, &T, &sk->g); /* Ajouter X simplement en fixant coeff[1] */
-  /* Construction manuelle de T + X */
-  memcpy(T_plus_X.coeff, T.coeff, (size_t)T.size * sizeof(gf_t));
-  T_plus_X.deg = T.deg;
-  if (T.deg >= 0) {
-    T_plus_X.coeff[1] = gf_add(T_plus_X.coeff[1], 1); /* X a le coefficient 1 au degre 1 */
-  } else {
-    T_plus_X.coeff[1] = 1;
+  /* Dans mc_decode, construction de T + X */
+  poly_copy(&T_plus_X, &T);                     // au lieu du poly_add erroné
+  if (T_plus_X.deg < 1) {
     T_plus_X.deg = 1;
+    T_plus_X.coeff[1] = 1;
+  } else {
+    T_plus_X.coeff[1] = gf_add(T_plus_X.coeff[1], 1);
   }
 
   poly_t theta = poly_alloc(t);
